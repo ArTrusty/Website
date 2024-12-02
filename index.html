@@ -1,16 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
-    <link rel="stylesheet" href="style.css"> <!-- CSS file -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Particle Text</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #1c1c1c;
+      overflow: hidden;
+    }
+
+    #container {
+      position: relative;
+      font-size: 80px;
+      font-family: 'Arial', sans-serif;
+      color: transparent;
+    }
+
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: purple;
+      border-radius: 50%;
+      pointer-events: none;
+      transition: transform 0.1s;
+    }
+  </style>
 </head>
 <body>
-   
-    <!-- JavaScript file -->
-    <script src="main.js"></script>
+  <div id="container">
+    <span id="text">Hello, World!</span>
+  </div>
+
+  <script>
+    const container = document.getElementById("container");
+    const text = document.getElementById("text");
+
+    function createParticles() {
+      const textContent = text.innerText;
+      container.innerHTML = ''; // Clear container
+      [...textContent].forEach((char, index) => {
+        const charSpan = document.createElement('span');
+        charSpan.style.position = 'absolute';
+        charSpan.style.top = '0';
+        charSpan.style.left = '0';
+        charSpan.innerText = char;
+        container.appendChild(charSpan);
+
+        [...char].forEach(() => {
+          const particle = document.createElement('div');
+          particle.classList.add('particle');
+          charSpan.appendChild(particle);
+          positionParticle(particle, charSpan);
+        });
+      });
+    }
+
+    function positionParticle(particle, element) {
+      const rect = element.getBoundingClientRect();
+      particle.style.top = `${Math.random() * rect.height}px`;
+      particle.style.left = `${Math.random() * rect.width}px`;
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      const particles = document.querySelectorAll('.particle');
+      particles.forEach((particle) => {
+        const dx = e.clientX - particle.getBoundingClientRect().left;
+        const dy = e.clientY - particle.getBoundingClientRect().top;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 150) {
+          particle.style.transform = `scale(${1 + (150 - distance) / 150})`;
+        } else {
+          particle.style.transform = 'scale(1)';
+        }
+      });
+    });
+
+    createParticles(); // Initialize the particle effect
+  </script>
 </body>
 </html>
+
 
 
