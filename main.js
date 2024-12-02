@@ -3,6 +3,7 @@ const options = {
         lerpAmt: 0.5,
         repelThreshold: 100
     },
+    
     particles: {
         density: 1.5,  // Controls the density of the particles
         size: 1,    // Size of each particle (bubble)
