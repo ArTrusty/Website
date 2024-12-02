@@ -30,13 +30,13 @@
       background-color: purple;
       border-radius: 50%;
       pointer-events: none;
-      transition: transform 0.1s;
+      transition: transform 0.1s ease-in-out;
     }
   </style>
 </head>
 <body>
   <div id="container">
-    <span id="text">Accenture</span> <!-- Changed the word to Accenture -->
+    <span id="text">Accenture</span> <!-- The text to be spelled out by particles -->
   </div>
 
   <script>
@@ -82,18 +82,24 @@
       particle.style.left = `${Math.random() * rect.width}px`;
     }
 
-    // Event listener for mouse movement to create interaction
+    // Event listener for mouse movement to create interaction (moving particles away)
     document.addEventListener('mousemove', (e) => {
       const particles = document.querySelectorAll('.particle');
       particles.forEach((particle) => {
-        const dx = e.clientX - particle.getBoundingClientRect().left;
-        const dy = e.clientY - particle.getBoundingClientRect().top;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = e.clientX - particle.getBoundingClientRect().left - window.scrollX;
+        const dy = e.clientY - particle.getBoundingClientRect().top - window.scrollY;
+        const distance = Math.sqrt(dx * dx + dy * dy); // Calculate distance from mouse
 
+        // If the mouse is close, move the particle away from the mouse
         if (distance < 150) {
-          particle.style.transform = `scale(${1 + (150 - distance) / 150})`;
+          const angle = Math.atan2(dy, dx); // Find the angle between particle and mouse
+          const force = (150 - distance) / 150; // The closer the mouse, the stronger the force
+          const moveX = Math.cos(angle) * force * 50; // Calculate horizontal movement
+          const moveY = Math.sin(angle) * force * 50; // Calculate vertical movement
+
+          particle.style.transform = `translate(${moveX}px, ${moveY}px)`; // Move the particle
         } else {
-          particle.style.transform = 'scale(1)';
+          particle.style.transform = 'translate(0, 0)'; // Reset position when far away
         }
       });
     });
@@ -102,7 +108,4 @@
   </script>
 </body>
 </html>
-
-
-
 
