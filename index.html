@@ -47,6 +47,8 @@
     function createParticles() {
       const textContent = text.innerText;
       container.innerHTML = ''; // Clear container
+      const particlesData = [];
+
       [...textContent].forEach((char, index) => {
         const charSpan = document.createElement('span');
         charSpan.style.position = 'absolute';
@@ -56,28 +58,39 @@
         container.appendChild(charSpan);
 
         // Create particles for each character
-        createParticlesForCharacter(charSpan, char);
+        const particles = createParticlesForCharacter(charSpan);
+        particlesData.push({ charSpan, particles });
       });
+
+      // Store the particles data for future interaction
+      return particlesData;
     }
 
     // Create particles for a single character
-    function createParticlesForCharacter(charSpan, char) {
+    function createParticlesForCharacter(charSpan) {
       const numParticles = 100; // Number of particles per letter
       const particles = [];
 
-      // Create particles around each character
-      for (let i = 0; i < numParticles; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        charSpan.appendChild(particle);
-        particles.push(particle);
-        positionParticle(particle, charSpan);
-      }
+      // Wait for the character span to be rendered so we can position the particles
+      requestAnimationFrame(() => {
+        const rect = charSpan.getBoundingClientRect();
+        
+        for (let i = 0; i < numParticles; i++) {
+          const particle = document.createElement('div');
+          particle.classList.add('particle');
+          charSpan.appendChild(particle);
+          particles.push(particle);
+
+          // Randomly position particles within the character span
+          positionParticle(particle, rect);
+        }
+      });
+
+      return particles;
     }
 
     // Position particles randomly within the character span
-    function positionParticle(particle, charSpan) {
-      const rect = charSpan.getBoundingClientRect();
+    function positionParticle(particle, rect) {
       particle.style.top = `${Math.random() * rect.height}px`;
       particle.style.left = `${Math.random() * rect.width}px`;
     }
@@ -104,8 +117,7 @@
       });
     });
 
-    createParticles(); // Initialize the particle effect
+    const particlesData = createParticles(); // Initialize the particle effect
   </script>
 </body>
 </html>
-
